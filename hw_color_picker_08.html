@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="https://fonts.googleapis.com/css?family=Nanum+Pen+Script&display=swap" rel="stylesheet">
+    <title>Document</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: #FFF9C4;
+            padding: 20px;
+            margin: 30px;
+            font-family: 'Nanum Pen Script', cursive;
+        }
+
+        div#circle {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            text-align: center;
+            font-size: 32px;
+            line-height: 200px;
+            box-shadow: 3px 3px 9px #9e9e9e;
+        }
+
+        .bar {
+            -webkit-appearance: none;
+            width: 150px;
+            height: 15px;
+            margin: 10px 50px;
+            background: linear-gradient(to right, #E0E0E0 0%, #E0E0E0 100%);
+            background-size: 150px 10px;
+            background-position: center;
+            background-repeat: no-repeat;
+            overflow: hidden;
+            outline: none;
+            zoom: 130%;
+            display: block;
+            margin: auto;
+            margin-bottom: 30px;
+        }
+
+        .ball::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: #E0E0E0;
+            position: relative;
+            z-index: 3;
+        }
+
+        .red::-webkit-slider-thumb {
+            background: #c0392b;
+        }
+
+        .red::-webkit-slider-thumb:after {
+            background: #e74c3c;
+        }
+
+        .green::-webkit-slider-thumb {
+            background: #27ae60;
+        }
+
+        .green::-webkit-slider-thumb:after {
+            background: #2ecc71;
+        }
+
+        .blue::-webkit-slider-thumb {
+            background: #2980b9;
+        }
+
+        .blue::-webkit-slider-thumb:after {
+            background: #3498db;
+        }
+
+        .btn {
+            display: inline-block;
+            width: 25px;
+            height: 25px;
+            line-height: 25px;
+            border-radius: 50%;
+            font-size: 0.9em;
+            background-color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="circle"></div><br><br>
+    <div>
+        <input class="btn" type="button" value="R" onclick="ask('r')">
+        <input class="red bar ball" type="range" min="0" max="255" id="rr" oninput="sbar('r',this)">
+        <br>
+        <input class="btn" type="button" value="G" onclick="ask('g')">
+        <input class="green bar ball" type="range" min="0" max="255" id="gg" oninput="sbar('g',this)">
+        <br>
+        <input class="btn" type="button" value="B" onclick="ask('b')">
+        <input class="blue bar ball" type="range" min="0" max="255" id="bb" oninput="sbar('b',this)">
+        <br><br>
+        <input class="btn" type="button" value="+" onmousedown="cont('add')" onmouseup="clearInterval(run)"
+            onmouseout="clearInterval(run)">
+        <input class="btn" type="button" value="-" onmousedown="cont('sub')" onmouseup="clearInterval(run)"
+            onmouseout="clearInterval(run)">
+        <input class="btn" type="button" value="?" onmousedown="cont('rand')" onmouseup="clearInterval(run)"
+            onmouseout="clearInterval(run)">
+    </div>
+</body>
+
+</html>
+<script>
+    function padLeft(str) { //補位數
+        str = str.toString(16);
+        return str.length >= 2 ? str : '0' + str;
+    }
+    function print_rgb() { //print color
+        document.getElementById("circle").style.backgroundColor = "rgb(" + rgb.r + "," + rgb.g + "," + rgb.b + ")";
+        document.getElementById("circle").style.color = "rgb(" + (255 - rgb.r) + "," + (255 - rgb.g) + "," + (255 - rgb.b) + ")";
+        document.getElementById("rr").value = rgb.r;
+        document.getElementById("gg").value = rgb.g;
+        document.getElementById("bb").value = rgb.b;
+        document.getElementById("circle").innerHTML = "#" + padLeft(rgb.r) + padLeft(rgb.g) + padLeft(rgb.b);
+    }
+    function ask(clr) {    //詢問單色並替換
+        do {
+            newclr = prompt('輸入0~255', rgb[clr]);
+        } while (!(0 <= newclr && newclr <= 255));
+        rgb[clr] = (newclr == null) ? rgb[clr] : Number(newclr);
+        print_rgb();
+    }
+    var rgb = { r: 0, g: 0, b: 0 }, run; //初始化
+    rgb.r = Math.floor((Math.random() * 256));
+    rgb.g = Math.floor((Math.random() * 256));
+    rgb.b = Math.floor((Math.random() * 256));
+    print_rgb();
+    function cont(select) {   //連續作業
+        run = setInterval(function () {
+            switch (select) {
+                case 'add':
+                    if (rgb.r < 255) rgb.r++;
+                    if (rgb.g < 255) rgb.g++;
+                    if (rgb.b < 255) rgb.b++;
+                    break;
+                case 'sub':
+                    if (rgb.r > 0) rgb.r--;
+                    if (rgb.g > 0) rgb.g--;
+                    if (rgb.b > 0) rgb.b--;
+                    break;
+                case 'rand':
+                    rgb.r = Math.floor((Math.random() * 256));
+                    rgb.g = Math.floor((Math.random() * 256));
+                    rgb.b = Math.floor((Math.random() * 256));
+                    break;
+            }
+            print_rgb();
+        }, 30);
+    }
+    function sbar(clr, obj) {
+        rgb[clr] = Number(obj.value);
+        print_rgb();
+    }
+</script>
